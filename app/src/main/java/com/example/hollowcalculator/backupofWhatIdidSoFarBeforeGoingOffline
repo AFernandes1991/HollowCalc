@@ -1,0 +1,197 @@
+package com.example.hollowcalculator;
+
+import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+public class MainActivity extends AppCompatActivity {
+    private EditText etDisplay, etSolution;
+    private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btnPlus, btnSub, btnDiv, btnMul, btnClear;
+    private Button btnRoot;
+    private String displayIn = "", displayOut;
+    private Boolean isEqualsClicked = false;
+    private Boolean isOperatorClicked;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initEditTexts();
+        initButtons();
+    }
+
+    public void initEditTexts(){
+        etDisplay = findViewById(R.id.etDisplay);
+        etDisplay.setShowSoftInputOnFocus(false);
+        etDisplay.setMovementMethod(new ScrollingMovementMethod()); //makes edittext scroll horizontally
+        etDisplay.setHorizontallyScrolling(true);
+        etSolution = findViewById(R.id.etSolution);
+        etDisplay.setShowSoftInputOnFocus(false);
+        etSolution.setMovementMethod(new ScrollingMovementMethod()); //makes edittext scroll horizontally
+        etSolution.setHorizontallyScrolling(true);
+    }
+
+    public void initButtons(){
+        btn1 = findViewById(R.id.btn1);
+        btn2 = findViewById(R.id.btn2);
+        btn3 = findViewById(R.id.btn3);
+        btn4 = findViewById(R.id.btn4);
+        btn5 = findViewById(R.id.btn5);
+        btn6 = findViewById(R.id.btn6);
+        btn7 = findViewById(R.id.btn7);
+        btn8 = findViewById(R.id.btn8);
+        btn9 = findViewById(R.id.btn9);
+        btnPlus = findViewById(R.id.btnPlus);
+        btnSub = findViewById(R.id.btnSub);
+        btnDiv = findViewById(R.id.btnDiv);
+        btnMul = findViewById(R.id.btnMul);
+        btnClear = findViewById(R.id.btnClear);
+        btnRoot = findViewById(R.id.btnRoot);
+
+    }
+
+    public void updateDisplay(String strToAdd){
+        if(isEqualsClicked != true){
+            String oldString = etDisplay.getText().toString();
+            etDisplay.setText(oldString + strToAdd);
+            String newString = etDisplay.getText().toString();
+            finalResult(newString);
+        }
+        else{                                  //goes here if isEqualsclcked = true
+            etDisplay.getText().clear();
+            isEqualsClicked = false;
+            String oldString = etDisplay.getText().toString();
+            etDisplay.setText(oldString + strToAdd);
+            String newString = etDisplay.getText().toString();
+            finalResult(newString);
+        }
+    }
+
+    public void finalResult(String answer){
+        Double result = null;
+        ScriptEngine engine = new ScriptEngineManager().getEngineByName("rhino");
+        try {
+            result = (double)engine.eval(answer);
+
+        } catch (ScriptException e) {
+            //Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show();
+        }
+        if(result!=null) {
+            String newResult = String.valueOf(result.doubleValue());
+            if(newResult.endsWith(".0")){
+                newResult = newResult.replace(".0", "");
+            }
+            etSolution.setText(newResult);
+        }
+    }
+
+    public void btnEquals(View view){
+        //String answer = etDisplay.getText().toString();
+       // finalResult(answer);
+        etDisplay.setText(etSolution.getText().toString());
+        etSolution.setText(null);
+        btnPlus.setEnabled(true);
+        btnSub.setEnabled(true);
+        btnDiv.setEnabled(true);
+        btnMul.setEnabled(true);
+        isEqualsClicked = true;
+
+
+    }
+    public void btnOne(View view){
+        updateDisplay("1");
+
+    }
+    public void btnTwo(View view){
+        updateDisplay("2");
+
+    }
+    public void btnThree(View view){
+        updateDisplay("3");
+
+    }
+    public void btnFour(View view){
+        updateDisplay("4");
+
+    }
+    public void btnFive(View view){
+        updateDisplay("5");
+
+    }
+    public void btnSix(View view){
+        updateDisplay("6");
+
+    }
+    public void btnSeven(View view){
+        updateDisplay("7");
+
+    }
+    public void btnEight(View view){
+        updateDisplay("8");
+
+    }
+    public void btnNine(View view){
+        updateDisplay("9");
+
+    }
+    public void btnZero(View view){
+        updateDisplay("0");
+
+    }
+    public void btnDot(View view){
+        updateDisplay(".");
+
+    }
+    public void btnRoot(View view){
+        updateDisplay("√");
+
+    }
+    public void btnClear(View view){
+        etDisplay.setText(null);
+        etSolution.setText(null);
+        btnPlus.setEnabled(true);
+        btnSub.setEnabled(true);
+        btnDiv.setEnabled(true);
+        btnMul.setEnabled(true);
+        isEqualsClicked = false;
+        return;
+    }
+    public void btnBack(View view){
+        String goBack = etDisplay.getText().toString();
+        goBack = goBack.substring(0, goBack.length()-1);
+        etDisplay.setText(goBack);
+
+    }
+    public void btnAddition(View view){
+        updateDisplay("+");
+        btnPlus.setEnabled(false);
+        isOperatorClicked = true;
+
+    }
+    public void btnSubtraction(View view){
+        updateDisplay("-");
+        btnSub.setEnabled(false);
+
+    }
+    public void btnDivision(View view){
+        updateDisplay("/");
+        btnDiv.setEnabled(false);
+
+    }
+    public void btnMultiplication(View view){
+        updateDisplay("*");
+        btnMul.setEnabled(false);
+
+    }
+}
